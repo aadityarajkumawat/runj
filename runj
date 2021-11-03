@@ -2,9 +2,10 @@
 import os
 import sys
 file_location = os.path.dirname(__file__)
-executable_binary_name = 'main.cpython-38.pyc'
+pwd = os.getcwd()
+executable_binary_name = 'maincpython-38.pyc'
 arg = ''
 if len(sys.argv) > 1:
     arg = sys.argv[1]
-os.system('cd {} && python3 ./{} {}'.format(file_location,
-                                            executable_binary_name, arg))
+os.system('cd {} && python3 ./{} {} {}'.format(file_location,
+                                               executable_binary_name, arg, pwd))

@@ -1,0 +1,99 @@
+#!/usr/bin/env python3
+import os
+import sys
+from colorama import Fore
+
+JAVAC = 'javac'
+JAVA = 'java'
+REMOVE = 'rm'
+
+sys.argv.pop(0)
+
+runnable_extension = '.class'
+file_extension = '.java'
+
+list_contents = 'ls'
+move_up_a_dir = 'cd ../'
+
+
+def concat(str1: str, str2: str) -> str:
+    return str1 + str2
+
+
+def generate_compile_command(file_name: str, package: str, cwd: str) -> str:
+    cmd_template = '{} -g {}/{}{}'
+    compile_java_code = cmd_template.format(
+        JAVAC, package, file_name, file_extension)
+    return compile_java_code
+
+
+def run_java_code_command(file_name: str, package: str) -> str:
+    cmd_template = '{} {}/{}'
+    run_java_code = cmd_template.format(JAVA, package, file_name)
+    return run_java_code
+
+
+def connect_commands(cmds: 'list[int]') -> str:
+    combined_command = ''
+    for i in range(len(cmds)):
+        if i == len(cmds) - 1:
+            combined_command += '{}'.format(cmds[i])
+        else:
+            combined_command += '{} && '.format(cmds[i])
+    return combined_command
+
+
+def remove_class_files(cwd: str):
+    stream_of_files = os.popen('cd {} && '.format(cwd) + list_contents)
+    new_line_char_seperated = stream_of_files.read()
+    all_files = new_line_char_seperated.splitlines()
+
+    class_files = []
+    for file in all_files:
+        if runnable_extension in file:
+            class_files.append(file)
+
+    for file in class_files:
+        os.system('cd {} && {} -rf {}'.format(cwd, REMOVE, file))
+
+
+def cd_to_project_path(cwd: str):
+    current_command = 'cd {} && cd ..'.format(cwd)
+    return current_command
+
+
+def compile_and_run_code():
+    global parsed_command
+    os.system(parsed_command)
+
+
+if len(sys.argv) > 1 and sys.argv[0] != '':
+    file_name = sys.argv[0]
+    cwd = sys.argv[1]
+
+    index_of_last_slash = cwd.rindex('/', 0, len(cwd))
+    package = cwd[index_of_last_slash + 1: len(cwd)]
+
+    cd_to_path = cd_to_project_path(cwd)
+    compile = generate_compile_command(file_name, package, cwd)
+    run = run_java_code_command(file_name, package)
+
+    list_of_seralized_commands = [move_up_a_dir, cd_to_path,  compile, run]
+    parsed_command = connect_commands(list_of_seralized_commands)
+
+    compile_and_run_code()
+    remove_class_files(cwd)
+else:
+    print(Fore.RED + 'Error:' + Fore.WHITE +
+          ' Please enter a file name as an argument')
+    print('========================================')
+    print('Options:')
+    print('\t--help: To know more about the `runj`')
+    print('\t<package_name/file_name>: To execute the java file')
+    print('\nWhat is `runj`?')
+    print(Fore.MAGENTA + 'runj is a command-line tool made to run java programs')
+    print('without bothering about its peer classes and cleans out')
+    print('class files after execution.')
+    print(Fore.WHITE + '========================================')
+    print(Fore.LIGHTCYAN_EX + 'Author: ' + Fore.LIGHTGREEN_EX +
+          'Aditya Raj Kumawat (https://github.com/aadityarajkumawat)\n')

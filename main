@@ -28,7 +28,7 @@ def generate_compile_command(file_name: str, package: str, cwd: str) -> str:
 
 
 def run_java_code_command(file_name: str, package: str) -> str:
-    cmd_template = '{} {}/{}'
+    cmd_template = 'clear && {} {}/{}'
     run_java_code = cmd_template.format(JAVA, package, file_name)
     return run_java_code
 

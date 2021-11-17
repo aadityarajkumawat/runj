@@ -1,0 +1,25 @@
+#!/usr/bin/env python3
+import os
+import sys
+
+# the location where the file to be compiled is stored
+file_location = os.path.dirname(__file__)
+# the location from where the 'runj' command is ran
+pwd = os.getcwd()
+# the name of the compiled version of main file,
+# should be changes to maincpython.. something like than in production
+executable_binary_name = 'mm'
+# name of file to be executed like 'Car.java' | 'Main.java'
+filename = ''
+# now here we have some really nice options, to
+# tell the tool how you want to display the output
+# for now I am keeping it just a single argument.
+# runj -c <filename>, to clear the stdout, before writing.
+option = ''
+# cheking of we got the required parameters in order to execute
+# the 'main' script
+if len(sys.argv) > 2:
+    filename = sys.argv[1]
+# running the main file to compile and run java programs
+os.system('cd {} && python3 {} {} {} {}'.format(file_location,
+                                                executable_binary_name, filename, pwd, option))
